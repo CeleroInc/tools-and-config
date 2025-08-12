@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+tools_binaries="https://github.com/neovim/neovim-releases/releases/download/v0.11.3/nvim-linux-x86_64.appimage \
+  https://github.com/nelsonenzo/tmux-appimage/releases/download/3.5a/tmux.appimage \
+  https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-unknown-linux-musl.tar.gz \
+  https://github.com/sharkdp/bat/releases/download/v0.25.0/bat-v0.25.0-x86_64-unknown-linux-musl.tar.gz \
+  https://gitlab.gnome.org/GNOME/meld/-/raw/main/bin/meld \
+  https://github.com/jgm/pandoc/releases/download/3.7.0.2/pandoc-3.7.0.2-linux-amd64.tar.gz \
+  "
+
+shopt -s extglob
+
+mkdir -p tmp && pushd tmp || ( echo "Cannot create and access 'tmp' folder. Exiting" ; exit )
+
+set - $tools_binaries
+
+for tool in "$@"; do
+  wget $tool
+done
+
+compressed_binaries="tools_binaries.tar.gz"
+tar czvf $compressed_binaries !($compressed_binaries) && rm !($compressed_binaries)
+
+# sftp -P 222 -o HostKeyAlgorithms=ssh-rsa matiasv@ae07ut01.cadence.com $compressed_binaries && pushd .. && rm -rf tmp || echo "Connection to the SFTP failed. Check if the VPN connection is up"
