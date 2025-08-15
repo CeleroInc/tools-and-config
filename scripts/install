@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+# Script Configuration
+compressed_binaries="tools_binaries.tar.gz"
+destination="$HOME/.local/bin"
+
+# Functions
+decompress() {
+  for item in * ; do
+    if [ -f "${item}" ] ; then
+      if [[ "${item##*.}" == "gz" ]] ; then
+        tar xzf "${item}" && rm "${item}"
+      fi
+    fi
+  done
+}
+
+make_executable() {
+  for item in * ; do
+    if [ -f "${item}" ] ; then
+      chmod +x "${item}"
+    fi
+  done
+}
+
+copy_to_destination() {
+  # for item in $(find -L .) ; do
+  #   if [ -x "${item}" ] ; then
+  #     # tar xzf "${item}" && rm ${item}
+  #     echo $item
+  #   fi
+  # done
+
+  destination="$1"
+
+  binaries="ripgrep-14.1.1-x86_64-unknown-linux-musl/rg \
+    bat-v0.25.0-x86_64-unknown-linux-musl/bat \
+    pandoc-3.7.0.2/bin/pandoc \
+    "
+  binaries="$(find . -type f -depth 1) $binaries"
+
+  set - $binaries
+
+  for item in "$@"; do
+    # cp "$item" "$destination"
+    echo "Dry run, change the code - " "$item" "$destination"
+  done
+}
+
+# Execution
+pushd tmp && tar xzf "$compressed_binaries" && mv "$compressed_binaries" ..
+mkdir -p $destination && decompress && make_executable && copy_to_destination "$destination"
+# rm $compressed_binaries
