@@ -36,6 +36,7 @@ copy_to_destination() {
   binaries="ripgrep-14.1.1-x86_64-unknown-linux-musl/rg \
     bat-v0.25.0-x86_64-unknown-linux-musl/bat \
     pandoc-3.7.0.2/bin/pandoc \
+    fd-v10.3.0-x86_64-unknown-linux-musl/fd \
     "
   binaries="$(find . -type f -depth 1) $binaries"
 
